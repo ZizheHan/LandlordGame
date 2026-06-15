@@ -1,4 +1,4 @@
-package login;
+package main.java.com.hzz.landlord;
 
 
 import java.io.*;
