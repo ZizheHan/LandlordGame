@@ -78,7 +78,7 @@ class Register {
 
     //读取账号和密码，让账号密码重新回到两个ArrayList里面保存，放止创建新的账号密码后被覆盖
     public void Return_Count() throws IOException, FileNotFoundException, ClassNotFoundException {
-        try (FileInputStream fileInputStream = new FileInputStream("Storeaccount.dat");
+        try (FileInputStream fileInputStream = new FileInputStream("StoreAccount.dat");
              ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
         ) {
             try {
@@ -192,7 +192,7 @@ class Account extends Register {
         getCode.SetInput_Code();
         //以账号密码输入错误和验证码检验错误为循环条件，当账号密码输入正确以及验证码检验合格时，跳出循环
         while (!CheckNameAndPassword(input_name, input_password)
-                && !getCode.CheckCode()) {
+                || !getCode.CheckCode()) {
             System.out.println("请重新输入！");
             System.out.println("请输入用户名:");
             Input_Name();

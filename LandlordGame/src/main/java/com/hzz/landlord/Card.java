@@ -1,10 +1,9 @@
 package main.java.com.hzz.landlord;
 
 public class Card implements Comparable<Card> {
-    private int id;
-    private String suit;
-    private int rank;
-
+    private int id;// 点数
+    private String suit;// 花色
+    private int rank;// 权重
 
     public Card(String suit, int id, int rank) {
         this.suit = suit;
@@ -36,11 +35,7 @@ public class Card implements Comparable<Card> {
         this.rank = rank;
     }
 
-    public boolean compareTo1(Card other) {
-        // 权重值越大牌越大
-        return this.rank > other.getRank();
-    }
-
+    // 卡牌排序
     @Override
     public int compareTo(Card o) {
         return Integer.compare(this.rank, o.rank);
@@ -60,7 +55,7 @@ public class Card implements Comparable<Card> {
             return "[未知牌]";
         }
 
-        // 转换J/Q/K/A/2的文字显示
+        // 转换J/Q/K/A/2的显示
         String pointStr;
         switch (this.rank) {
             case 11:
@@ -87,6 +82,7 @@ public class Card implements Comparable<Card> {
         return "[" + this.suit + pointStr + "]";
     }
 
+    //判断是不是同一张牌
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;

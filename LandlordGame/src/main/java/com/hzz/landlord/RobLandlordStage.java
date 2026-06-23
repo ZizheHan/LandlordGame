@@ -1,10 +1,10 @@
 package main.java.com.hzz.landlord;
 
 
-import com.huanle.doudizhu.model.Card;
-import com.huanle.doudizhu.player.AIPlayer;
-import com.huanle.doudizhu.player.HumanPlayer;
-import com.huanle.doudizhu.player.Player;
+//import com.huanle.doudizhu.model.Card;
+//import com.huanle.doudizhu.player.AIPlayer;
+//import com.huanle.doudizhu.player.HumanPlayer;
+//import com.huanle.doudizhu.player.Player;
 
 import java.util.List;
 import java.util.Random;
