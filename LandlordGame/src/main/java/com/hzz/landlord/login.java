@@ -192,7 +192,7 @@ class Account extends Register {
         getCode.SetInput_Code();
         //以账号密码输入错误和验证码检验错误为循环条件，当账号密码输入正确以及验证码检验合格时，跳出循环
         while (!CheckNameAndPassword(input_name, input_password)
-                || !getCode.CheckCode()) {
+                && !getCode.CheckCode()) {
             System.out.println("请重新输入！");
             System.out.println("请输入用户名:");
             Input_Name();
