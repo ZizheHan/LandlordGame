@@ -11,9 +11,9 @@ public class GameStarter {
     private static final Register REGISTER = new Register();
 
     public static void main(String[] args) {
-        System.out.println("========================================");
-        System.out.println("     欢迎来到「斗地主」文字版登录系统      ");
-        System.out.println("========================================");
+        System.out.println("=================================================");
+        System.out.println("      欢迎来到「十七张牌你能秒我？」文字登录系统       ");
+        System.out.println("=================================================");
 
         loadAccountsSilently();
 
@@ -39,16 +39,14 @@ public class GameStarter {
                         return;
                     }
                     break;
-                // ==================== 新增功能：打印账号 ====================
                 case "3":
                     printAllAccounts();
                     break;
-                // ==================== 新增功能：清除所有账号 ====================
                 case "4":
                     clearAllAccounts();
                     break;
                 case "5":
-                    System.out.println("感谢使用，再见！");
+                    System.out.println("欢迎下次使用，再见！");
                     return;
                 default:
                     System.out.println("输入有误，请重新选择。");
@@ -56,18 +54,18 @@ public class GameStarter {
         }
     }
 
-    // ==================== 更新菜单 ====================
+    // 主菜单
     private static void printMenu() {
-        System.out.println("\n------------ 主菜单 ------------");
-        System.out.println("1. 注册新账号");
-        System.out.println("2. 登录已有账号");
-        System.out.println("3. 打印所有注册账号");     // 新增
-        System.out.println("4. 清除所有账号");         // 新增
-        System.out.println("5. 退出");                // 原3改为5
-        System.out.print("请输入选项 (1/2/3/4/5): ");
+        System.out.println("\n----- 主菜单 ------");
+        System.out.println("1.     注册新账号    ");
+        System.out.println("2.    登录已有账号   ");
+        System.out.println("3. 打印所有已注册账号 ");
+        System.out.println("4.    清除所有账号   ");
+        System.out.println("5.       退出       ");
+        System.out.print(" 请输入选项 (1/2/3/4/5):");
     }
 
-    // ==================== 注册 ====================
+    //注册
     private static boolean doRegister() {
         try {
             System.out.println("\n>>> 开始注册新账号 <<<");
@@ -80,7 +78,7 @@ public class GameStarter {
         }
     }
 
-    // ==================== 登录 ====================
+    //登录
     private static boolean doLogin() {
         System.out.println("\n>>> 登录 <<<");
         loadAccountsSilently();
@@ -110,20 +108,20 @@ public class GameStarter {
         return true;
     }
 
-    // ==================== 新增方法：打印所有注册账号 ====================
+    //打印所有注册账号
     private static void printAllAccounts() {
         try {
-            // 先重新加载，保证数据最新
+            //重新加载
             REGISTER.Return_Count();
             System.out.println("\n>>> 所有注册账号 <<<");
-            REGISTER.printA();   // 直接调用 Register 的打印方法
+            REGISTER.printA();
         } catch (Exception e) {
             System.out.println("打印账号失败: " + e.getMessage());
             e.printStackTrace();
         }
     }
 
-    // ==================== 新增方法：清除所有账号 ====================
+    //清除所有账号
     private static void clearAllAccounts() {
         System.out.print("\n警告：此操作将删除所有注册账号，不可恢复！是否继续？(y/n): ");
         String confirm = SCANNER.nextLine().trim();
@@ -133,8 +131,8 @@ public class GameStarter {
         }
 
         try {
-            REGISTER.Clear_All_Account();   // 调用 Register 的清空方法
-            // 清空内存中的列表，保持一致性
+            REGISTER.Clear_All_Account();
+            //清空内存中的列表
             REGISTER.getAccount_name().clear();
             REGISTER.getAccount_passWord().clear();
             System.out.println("所有账号已成功清除。");
@@ -144,7 +142,7 @@ public class GameStarter {
         }
     }
 
-    // ==================== 辅助方法 ====================
+    //辅助方法
     private static void loadAccountsSilently() {
         try {
             REGISTER.Return_Count();
@@ -154,7 +152,7 @@ public class GameStarter {
     }
 
     private static void launchGame() {
-        System.out.println("\n>>> 正在启动游戏图形界面... <<<");
+        System.out.println("\n>>> 正在启动游戏界面 <<<");
         Application.launch(BookCover.class);
     }
 }
