@@ -50,6 +50,7 @@ public class CardsGame {
     // 叫分相关
     private static LandlordBidding landlordBidding;
 
+    //绑定UI组件对应事件，初始化背景图片
     static {
         cardsPane.getChildren().addAll(playerHandPane, playAreaPane, robotInfoPane, statusText, passLabel);
         hideAllButtons();
@@ -94,6 +95,7 @@ public class CardsGame {
         });
     }
 
+    //调用
     public static void startGame() {
         initGame();
         //LandlordBidding转交给叫分逻辑
@@ -147,6 +149,7 @@ public class CardsGame {
         landlordBidding.start();
     }
 
+    //使用项目相对路径加载图片方法
     private static Image loadImage(String path) {
         try {
             return new Image(CardsGame.class.getResource(path).openStream());
@@ -173,6 +176,7 @@ public class CardsGame {
         lastPlayerWhoPlayed = -1;
         roundReset = false;
 
+        //给对应扑克牌起名，存入卡牌names数组
         String[] suits = {"Spade", "Heart", "Diamond", "Club"};
         List<String> names = new ArrayList<>();
         for (String suit : suits) {
@@ -184,6 +188,7 @@ public class CardsGame {
         names.add("JOKER-20.png");
         Collections.shuffle(names);
 
+        //查找卡牌，创建卡牌数组，初始化卡牌（图片，点数）
         List<PokerCard> all = new ArrayList<>();
         for (String name : names) {
             Image img = loadImage("/IMG/PNG/" + name);
@@ -203,12 +208,14 @@ public class CardsGame {
             all.add(card);
         }
 
+        //随机发牌
         int idx = 0;
         for (int i = 0; i < 17; i++) playerHand.add(all.get(idx++));
         for (int i = 0; i < 17; i++) robot1Hand.add(all.get(idx++));
         for (int i = 0; i < 17; i++) robot2Hand.add(all.get(idx++));
         for (int i = 0; i < 3; i++) bottomCards.add(all.get(idx++));
 
+        //初始化人机状态，设置随即头像
         showRobots();
         refreshPlayerHand();
         statusText.setText("准备抢地主");
@@ -216,6 +223,7 @@ public class CardsGame {
         statusText.setLayoutY(100);
     }
 
+    //根据图片名返回卡牌点数
     private static int extractNumber(String str) {
         StringBuilder sb = new StringBuilder();
         for (char c : str.toCharArray()) {
@@ -297,39 +305,46 @@ public class CardsGame {
 
     //========================================王思涵========================================
     private static void handlePlayerOut() {
+        // 1. 拦截校验：不是玩家回合 / 游戏已结束，直接禁止出牌
         if (!isPlayerTurn || isGameOver) return;
+        // 2. 收集玩家鼠标选中的所有卡牌
         List<PokerCard> selected = new ArrayList<>();
         for (PokerCard card : playerHand) if (card.isSelected) selected.add(card);
-
+        // 3. 校验：一张牌都没选，提示弹窗文字
         if (selected.isEmpty()) {
             statusText.setText("请先选牌！");
             return;
         }
-
+        // 4. 解析选中的牌，判断是否合法牌型（单张/对子/顺子/炸弹等）
         HandType currentType = HandType.analyze(selected);
         if (currentType == null) {
             statusText.setText("非法牌型！");
             return;
         }
-
+        // 5. 校验：上一轮有人出牌，当前牌必须能压过上家，否则不让出
         if (!lastPlayedCards.isEmpty() && !HandType.canBeat(currentType, HandType.analyze(lastPlayedCards))) {
             statusText.setText("管不上，请重新选择！");
             return;
         }
 
-        // 出牌
+        // 6. 执行出牌：从玩家手牌移除选中的牌
         playerHand.removeAll(selected);
+        // 记录本轮打出的牌，给下家判断大小
         lastPlayedCards.clear();
         lastPlayedCards.addAll(selected);
+        // 记录本轮出牌人是玩家
         lastPlayerWhoPlayed = 0;
+        // 7. 界面刷新：把打出的牌展示到桌面区域，刷新玩家剩余手牌
         showPlayCards(selected, "玩家");
         refreshPlayerHand();
+        // 8. 隐藏玩家操作按钮（出牌、不要）
         cardsPane.getChildren().removeAll(btnOut, btnPass);
+        // 9. 回合状态重置，切换到下一个玩家
         isPlayerTurn = false;
         consecutivePasses = 0;
         roundReset = false;
         currentPlayer = (currentPlayer + 1) % 3;
-        nextTurn();
+        nextTurn(); // 进入下一回合
     }
 
     private static void handlePlayerPass() {
@@ -362,33 +377,39 @@ public class CardsGame {
 
     //========================================王思涵========================================
     private static void robotTurn() {
+        //游戏结束直接退出
         if (isGameOver) return;
+        // 获取当前操作机器人ID（1/2）和对应的手牌集合
         int robotId = currentPlayer;
         List<PokerCard> hand = (robotId == 1) ? robot1Hand : robot2Hand;
         String name = getPlayerName(robotId);
-
+        // 获取上一轮桌面打出的牌型
         HandType lastType = lastPlayedCards.isEmpty() ? null : HandType.analyze(lastPlayedCards);
+        // AI算法：根据上家牌、自身手牌、是否一轮重置，算出要打出的牌
         List<PokerCard> toPlay = AISearch.findValidCards(hand, lastType, roundReset);
 
         if (toPlay != null && !toPlay.isEmpty()) {
-            // 能出牌
-            hand.removeAll(toPlay);
+            //分支1：AI选择出牌
+            hand.removeAll(toPlay);// 移除机器人手牌
             lastPlayedCards.clear();
             lastPlayedCards.addAll(toPlay);
             lastPlayerWhoPlayed = robotId;
+            // 界面展示机器人打出的牌，刷新机器人面板
             showPlayCards(toPlay, name);
             refreshRobots();
             consecutivePasses = 0;
             roundReset = false;
             currentPlayer = (currentPlayer + 1) % 3;
+            // 机器人手牌打空，直接判定胜利
             if (hand.isEmpty()) {
                 statusText.setText(name + " 胜利！");
                 isGameOver = true;
             }
         } else {
-            // 不要
+            // 分支2：AI选择“不要”
             showPass(name);
             consecutivePasses++;
+            // 连续两次不要，清空桌面牌，轮到首个出牌人自由出牌
             if (consecutivePasses >= 2) {
                 lastPlayedCards.clear();
                 consecutivePasses = 0;
@@ -396,10 +417,11 @@ public class CardsGame {
                 roundReset = true;
                 statusText.setText("全部不要，轮到 " + getPlayerName(currentPlayer) + " 自由出牌");
             } else {
+                // 只过一次，正常切换下家
                 currentPlayer = (currentPlayer + 1) % 3;
             }
         }
-
+        // 延迟0.8秒再执行下一回合，模拟机器人思考停顿，提升交互体验
         PauseTransition pause = new PauseTransition(Duration.seconds(0.8));
         pause.setOnFinished(e -> nextTurn());
         pause.play();
@@ -467,6 +489,7 @@ public class CardsGame {
         robotInfoPane.getChildren().add(ct);
     }
 
+    //计算剩余卡牌数卡牌
     private static void refreshRobots() {
         for (javafx.scene.Node node : robotInfoPane.getChildren()) {
             if (node instanceof Text && node.getId() != null && node.getId().startsWith("robotCount_")) {

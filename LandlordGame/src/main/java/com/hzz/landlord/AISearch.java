@@ -3,19 +3,9 @@ package main.java.com.hzz.landlord;
 
 import java.util.*;
 
-/**
- * AI 出牌搜索算法 —— 从 CardsGame 提取。
- * 负责根据手牌和场上牌型选择合适的出牌组合。
- */
 public class AISearch {
 
-    /**
-     * 在指定手牌中寻找能压过 lastType 的牌（或自由出牌），若不能则返回 null。
-     * @param hand     机器人手牌
-     * @param lastType 上家牌型（null 表示自由出牌）
-     * @param reset    本轮是否重置（自由出牌）
-     * @return 选择的牌，null 表示不要
-     */
+    //AI 出牌搜索
     public static List<CardsGame.PokerCard> findValidCards(List<CardsGame.PokerCard> hand, HandType lastType, boolean reset) {
         if (hand.isEmpty()) return null;
 
@@ -60,9 +50,9 @@ public class AISearch {
         return null;
     }
 
-    /**
-     * 返回一手牌所有可能组成的合法牌型组合（List of List< PokerCard >）。
-     */
+
+    //返回一手牌所有可能组成的合法牌型组合（List of List< PokerCard >）
+
     public static List<List<CardsGame.PokerCard>> getAllPossibleCombos(List<CardsGame.PokerCard> hand) {
         List<List<CardsGame.PokerCard>> result = new ArrayList<>();
         Map<Integer, List<CardsGame.PokerCard>> groups = new HashMap<>();
